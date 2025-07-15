@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro de Carga</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --negro-neutro: #161A1D;
+      --guinda-pomelo: #9B2247;
+      --verde-institucional: #1E5B4F;
+      --dorado: #A57F2C;
+      --gris-fondo: #F5F5F5;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--gris-fondo);
+      color: var(--negro-neutro);
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* Contenedor general en dos columnas */
+    .container {
+      display: flex;
+      max-width: 900px;
+      margin: auto;
+      gap: 30px;
+      align-items: flex-start;
+    }
+
+    /* Columna izquierda: instrucciones */
+    .instrucciones {
+      flex: 1;
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+      font-size: 1.05em;
+      line-height: 1.5;
+      border: 2px solid var(--verde-institucional);
+    }
+
+    .instrucciones h3 {
+      margin-top: 0;
+      color: var(--guinda-pomelo);
+      text-align: center;
+      font-weight: 900;
+    }
+
+    /* Columna derecha: formulario */
+    .form-container {
+      flex: 1;
+    }
+
+    /* Animación para degradado */
+    @keyframes gradienteAnimado {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .titulo-principal {
+      font-size: 3.5em;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 0;
+      letter-spacing: 4px;
+      font-family: 'Arial Black', Arial, sans-serif;
+      user-select: none;
+      display: inline-block;
+      padding: 12px 40px;
+      border-radius: 20px;
+      background: linear-gradient(270deg, var(--guinda-pomelo), var(--dorado), var(--guinda-pomelo));
+      background-size: 400% 400%;
+      animation: gradienteAnimado 8s ease infinite;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .subtitulo {
+      font-size: 1.8em;
+      font-weight: 700;
+      color: white;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+      font-family: 'Arial Black', Arial, sans-serif;
+      user-select: none;
+      display: inline-block;
+      padding: 6px 30px;
+      border-radius: 20px;
+      background: linear-gradient(270deg, var(--verde-institucional), var(--dorado), var(--verde-institucional));
+      background-size: 400% 400%;
+      animation: gradienteAnimado 10s ease infinite;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    #mensaje-dia {
+      color: var(--verde-institucional);
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+      border: 2px solid var(--verde-institucional);
+      text-align: left;
+    }
+
+    label {
+      font-weight: 600;
+      color: var(--negro-neutro);
+    }
+
+    input {
+      padding: 10px;
+      font-size: 1em;
+      border: 1.5px solid var(--dorado);
+      border-radius: 5px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--guinda-pomelo);
+      box-shadow: 0 0 5px var(--guinda-pomelo);
+    }
+
+    button[type="submit"] {
+      background-color: var(--guinda-pomelo);
+      color: white;
+      padding: 12px;
+      font-weight: 700;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    button[type="submit"]:hover {
+      background-color: var(--negro-neutro);
+    }
+
+    .download-btn {
+      margin-top: 20px;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 1.1em;
+      background-color: var(--verde-institucional);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+
+    .download-btn:hover {
+      background-color: var(--dorado);
+      color: var(--negro-neutro);
+    }
+
+    /* Responsivo para móviles */
+    @media (max-width: 700px) {
+      .container {
+        flex-direction: column;
+      }
+      .instrucciones, .form-container {
+        width: 100%;
+      }
+      .titulo-principal, .subtitulo {
+        font-size: 2.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="instrucciones">
+      <h3>Instrucciones de Uso</h3>
+      <ol>
+        <li>Selecciona el <strong>Número de Punto</strong> entre 1 y 30.</li>
+        <li>Completa los campos: placa del tractocamión, remolque, autotanque, transportista, chofer, producto y capacidad.</li>
+        <li>Haz clic en <strong>Agregar registro</strong> para guardar el dato localmente.</li>
+        <li>Repite para cada nuevo registro que desees agregar durante el día.</li>
+        <li>Al terminar, usa el botón <strong>Descargar Excel del Día</strong> para bajar el archivo con todos los registros guardados.</li>
+        <li>El sistema limpia automáticamente los registros cada día.</li>
+        <li>Para cualquier problema o duda, refresca la página y revisa las instrucciones nuevamente.</li>
+      </ol>
+    </div>
+
+    <div class="form-container">
+      <div class="titulo-principal">PEMEX</div>
+      <div class="subtitulo">Logística</div>
+
+      <div id="mensaje-dia"></div>
+
+      <form id="registroForm" autocomplete="off">
+        <label for="punto">Número de Punto (1-30):</label>
+        <input type="number" id="punto" min="1" max="30" required />
+
+        <input type="text" id="placaTracto" placeholder="Placa del tractocamión" required />
+        <input type="text" id="placaRemolque" placeholder="Placa del remolque" required />
+        <input type="text" id="autotanque" placeholder="Número de autotanque" required />
+        <input type="text" id="transportista" placeholder="Nombre del transportista" required />
+        <input type="text" id="chofer" placeholder="Nombre del chofer" required />
+        <input type="text" id="producto" placeholder="Producto transportado" required />
+        <input type="number" id="capacidad" placeholder="Capacidad (toneladas)" required />
+
+        <button type="submit">Agregar registro</button>
+      </form>
+
+      <button class="download-btn" onclick="descargarExcel()">📥 Descargar Excel del Día</button>
+    </div>
+
+  </div>
+
+  <script>
+    const form = document.getElementById("registroForm");
+    const mensajeDia = document.getElementById("mensaje-dia");
+
+    function obtenerFechaHoy() {
+      return new Date().toISOString().split("T")[0];
+    }
+
+    function obtenerRegistros() {
+      const fechaActual = obtenerFechaHoy();
+      const claveFecha = "ultimaFechaCarga";
+      const claveRegistros = "registrosCarga_" + fechaActual;
+      const ultimaFecha = localStorage.getItem(claveFecha);
+
+      if (ultimaFecha !== fechaActual) {
+        Object.keys(localStorage).forEach(k => {
+          if (k.startsWith("registrosCarga_")) localStorage.removeItem(k);
+        });
+        localStorage.setItem(claveFecha, fechaActual);
+        mensajeDia.textContent = `🆕 Nueva hoja creada para el día ${fechaActual}`;
+      } else {
+        mensajeDia.textContent = "";
+      }
+
+      const registros = localStorage.getItem(claveRegistros);
+      return registros ? JSON.parse(registros) : [];
+    }
+
+    function guardarRegistro(nuevo) {
+      const fecha = obtenerFechaHoy();
+      const key = "registrosCarga_" + fecha;
+      const registros = obtenerRegistros();
+      registros.push(nuevo);
+      localStorage.setItem(key, JSON.stringify(registros));
+    }
+
+    obtenerRegistros();
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const punto = document.getElementById("punto").value;
+      if (!punto || punto < 1 || punto > 30) {
+        alert("⚠️ Ingresa un punto válido (1–30).");
+        return;
+      }
+      const nuevoRegistro = {
+        "Fecha": obtenerFechaHoy(),
+        "Punto": punto.padStart(2, "0"),
+        "Placa Tractocamión": document.getElementById("placaTracto").value,
+        "Placa Remolque": document.getElementById("placaRemolque").value,
+        "Número de Autotanque": document.getElementById("autotanque").value,
+        "Transportista": document.getElementById("transportista").value,
+        "Chofer": document.getElementById("chofer").value,
+        "Producto": document.getElementById("producto").value,
+        "Capacidad (toneladas)": document.getElementById("capacidad").value
+      };
+      guardarRegistro(nuevoRegistro);
+      alert("✅ Registro agregado.");
+      form.reset();
+    });
+
+    function descargarExcel() {
+      const fecha = obtenerFechaHoy();
+      const registros = obtenerRegistros();
+      if (registros.length === 0) {
+        alert("No hay registros hoy.");
+        return;
+      }
+      const punto = registros[0]["Punto"] || "00";
+      const nombreArchivo = `registro_punto_${punto}_${fecha}.xlsx`;
+      const ws = XLSX.utils.json_to_sheet(registros);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Registros");
+      XLSX.writeFile(wb, nombreArchivo);
+    }
+  </script>
+</body>
+</html>
