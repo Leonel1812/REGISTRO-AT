@@ -246,7 +246,13 @@
     const mensajeDia = document.getElementById("mensaje-dia");
 
     function obtenerFechaHoy() {
-      return new Date().toISOString().split("T")[0];
+      const fecha = new Date();
+      const year = fecha.getFullYear();
+      const month = String(fecha.getMonth() + 1).padStart(2, '0');
+      const day = String(fecha.getDate()).padStart(2, '0');
+      
+      // Esto asegura que se use la fecha y hora local del dispositivo
+      return `${year}-${month}-${day}`;
     }
 
     function obtenerRegistros() {
